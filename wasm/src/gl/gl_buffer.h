@@ -84,10 +84,13 @@ class gl_um_buffer: public gl_buffer{
 			GLuint bind_target,
 			GLenum usage = GL_STATIC_DRAW);
 
+		size_t get_elm_size();
+
 		std::vector<T> get(size_t offset, size_t length);
 		T get(size_t index);
 
 		void set(size_t offset, std::vector<T>& data);
+		void set(size_t offset, T* data, size_t size);
 		void set(size_t index, T data);
 };
 

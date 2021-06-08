@@ -10,8 +10,6 @@
 class line_graph{
 	private:
 		std::shared_ptr<gl_um_buffer<float>> values;
-		x_axis main_x_axis;
-		y_axis main_y_axis;
 		mesh<gl_um_buffer<float>> lines;
 
 		static inline std::shared_ptr<program> prog{};
@@ -22,7 +20,8 @@ class line_graph{
 			float max_y,
 			int16_t width,
 			int16_t height,
-			glm::vec2 origin);
+			glm::vec2 origin,
+			SDL_Color color = {255, 0, 0, 0});
 
 		std::shared_ptr<gl_um_buffer<float>> get_values_array();
 

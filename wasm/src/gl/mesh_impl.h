@@ -90,4 +90,19 @@ void mesh<T>::draw(){
 	ctx_end();
 }
 
+template<typename T>
+void mesh<T>::draw(size_t offset, size_t count){
+	ctx_begin();
+	if(index_buffer){
+    	glDrawElements(
+    		drawing_mode,
+    		count,
+    		GL_UNSIGNED_INT,
+    		(void*)(offset * vertex_buffer->get_elm_size()));
+	}else{
+		glDrawArrays(drawing_mode, offset, count);
+	}
+	ctx_end();
+}
+
 #endif

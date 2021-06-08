@@ -91,6 +91,19 @@ export class GraphComponent implements AfterViewInit {
           this._graph._free(ptr);
           return result;
         };
+
+        this._graph.addSpectrenValues = (values: number[]): void => {
+          const ptr = this._graph._malloc(8 * values.length);
+          this._graph.HEAPF32.set(new Float32Array(values), ptr / 4);
+          this._graph._addSpectrenValues(ptr, values.length);
+          this._graph._free(ptr);
+        };
+        this._graph.addReference = (key: string, values: number[]): void => {
+          const ptr = this._graph._malloc(8 * values.length);
+          this._graph.HEAPF32.set(new Float32Array(values), ptr / 4);
+          this._graph._addReference(key, ptr, values.length);
+          this._graph._free(ptr);
+        };
         setTimeout(() => this.isRuntimeInitialized.next(true), 0);
       }
     };

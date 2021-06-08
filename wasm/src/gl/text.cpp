@@ -9,21 +9,21 @@
 #include "gl_buffer_impl.h"
 
 text::text(std::string message, SDL_Color color, uint32_t size, std::string font_path): message(message), color(color), size(size){
-	// webgl doesn't support BGRA output format of the ttf lib so we swap the colors and use RGBA	
-	uint8_t color_b = color.r;
-	color.r = color.b;
-	color.b = color_b;
-
 	TTF_Font*& font = fonts[{font_path, size}];
 	if(!font){
 		font = TTF_OpenFont(font_path.c_str(), size);
 		if (!font){
 			std::cerr << "failed to open font!" << std::endl;
+			assert(0);
 		}
 	}
-	SDL_Surface * sFont = TTF_RenderText_Blended(font, message.c_str(), color);
-	w = sFont->w;
-	h = sFont->h;
+	
+	SDL_Surface* sFont = TTF_RenderText_Blended_Wrapped(font, message.c_str(), color, singleton<window_info>::value.w);
+	assert(sFont);
+	SDL_Surface* sFont2 = SDL_ConvertSurfaceFormat(sFont, SDL_PIXELFORMAT_ABGR8888, 0);
+	assert(sFont2);
+	w = sFont2->w;
+	h = sFont2->h;
 
 	std::vector<vertex> vertices = {
     	{{0,h},{0,1}},
@@ -43,7 +43,7 @@ text::text(std::string message, SDL_Color color, uint32_t size, std::string font
 			w,
 			h,
 			GL_UNSIGNED_BYTE,
-			sFont->pixels);
+			sFont2->pixels);
 
 	GLint u_width = prog->get_uniform("width");
 	GLint u_height = prog->get_uniform("height");
@@ -79,6 +79,7 @@ text::text(std::string message, SDL_Color color, uint32_t size, std::string font
 	};
 
 	SDL_FreeSurface(sFont);
+	SDL_FreeSurface(sFont2);
 }
 
 std::shared_ptr<text> text::create(std::string message, SDL_Color color, uint32_t size, std::string font_path){

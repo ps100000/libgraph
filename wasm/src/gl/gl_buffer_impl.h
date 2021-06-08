@@ -1,6 +1,5 @@
 #ifndef _GL_BUFFER_IMPL_H_
 #define _GL_BUFFER_IMPL_H_
-
 #include <iostream>
 
 #include "gl_buffer.h"
@@ -75,11 +74,17 @@ std::shared_ptr<gl_um_buffer<T>> gl_um_buffer<T>::create(
 }
 
 template<typename T>
+size_t gl_um_buffer<T>::get_elm_size(){
+	return sizeof(T);
+}
+
+template<typename T>
 std::vector<T> gl_um_buffer<T>::get(size_t offset, size_t length){
 	std::vector<T> data(length);
 	ctx_begin();
 	glGetBufferSubData(bind_target, offset * sizeof(T), length * sizeof(T), data.data());
 	ctx_end();
+	return data;
 }
 
 template<typename T>
@@ -95,6 +100,13 @@ template<typename T>
 void gl_um_buffer<T>::set(size_t offset, std::vector<T>& data){
 	ctx_begin();
 	glBufferSubData(bind_target, offset * sizeof(T), data.size() * sizeof(T), data.data());
+	ctx_end();
+}
+
+template<typename T>
+void gl_um_buffer<T>::set(size_t offset, T* data, size_t size){
+	ctx_begin();
+	glBufferSubData(bind_target, offset * sizeof(T), size * sizeof(T), data);
 	ctx_end();
 }
 

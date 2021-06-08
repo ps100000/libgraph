@@ -1,8 +1,5 @@
 #include "axis.h"
 
-#include <sstream>
-#include <iomanip>
-
 void axis::update(){
 	bool is_y = (direction == 'y');
 	float span = max - min;
@@ -35,9 +32,7 @@ void axis::update(){
 			vertices[index++] = swap_if({x_sub,-5}, is_y);
 		}
 
-		std::stringstream stream;
-		stream << std::fixed << std::setprecision(1) << s * seg_width;
-		std::shared_ptr<text> seg_label = text::create(stream.str(), {0, 0, 0, 0}, 15);
+		std::shared_ptr<text> seg_label = text::create(label_func(s * seg_width), {0, 0, 0, 0}, 12);
 		if(!is_y){
 		    seg_label->h_align = horizontal_align::center;
 		    seg_label->v_align = vertical_align::top;
@@ -84,8 +79,13 @@ void axis::update(){
 		begin_func
 	};
 
-    descr_text->pos = origin + (is_y ?
-    	glm::vec2{5, pos_length} : glm::vec2{pos_length + 12.5, 5});
+	if(is_y){
+    	descr_text->v_align = vertical_align::bottom;
+	    descr_text->pos = origin + glm::vec2{5, pos_length};
+	}else{
+	    descr_text->v_align = vertical_align::top;
+	    descr_text->pos = origin + glm::vec2{pos_length + 12.5, -5};
+	}
 
     vertices = std::vector<glm::vec2>();
     if(pos_length > 0){
@@ -127,17 +127,18 @@ axis::axis(
 	float max,
 	float seg_width,
 	uint8_t nr_subdiv,
-	char direction):
+	char direction,
+	std::function<std::string(float)> label_func):
 		seg_width(seg_width),
 		nr_subdiv(nr_subdiv),
 		min(min),
 		max(max),
 		length(length),
 		origin(0,0),
+		label_func(label_func),
 		direction(direction) {
-	descr_text = text::create(description, {0, 0, 0, 0}, 20);
+	descr_text = text::create(description, {0, 0, 0, 0}, 16);
     descr_text->h_align = horizontal_align::left;
-    descr_text->v_align = vertical_align::bottom;
 }
 
 void axis::init(){
@@ -189,14 +190,16 @@ x_axis::x_axis(
 	float min,
 	float max,
 	float seg_width,
-	uint8_t nr_subdiv): axis(
+	uint8_t nr_subdiv,
+	std::function<std::string(float)> label_func): axis(
 		description,
 		length,
 		min,
 		max,
 		seg_width,
 		nr_subdiv,
-		'x'){
+		'x',
+		label_func){
 	update();
 }
 
@@ -208,13 +211,15 @@ y_axis::y_axis(
 	float min,
 	float max,
 	float seg_width,
-	uint8_t nr_subdiv): axis(
+	uint8_t nr_subdiv,
+	std::function<std::string(float)> label_func): axis(
 		description,
 		length,
 		min,
 		max,
 		seg_width,
 		nr_subdiv,
-		'y'){
+		'y',
+		label_func){
 	update();
 }

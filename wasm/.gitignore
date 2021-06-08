@@ -1,2 +1,4 @@
 /bin
 /build
+/graph
+/build_tools/resource2c/resource2c

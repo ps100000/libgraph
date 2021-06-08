@@ -5,23 +5,10 @@ line_graph::line_graph(
 	float max_y,
 	int16_t width,
 	int16_t height,
-	glm::vec2 origin){
+	glm::vec2 origin,
+	SDL_Color color){
 	std::vector<float> zero_init(value_count, 0);
 	values = gl_um_buffer<float>::create(zero_init, GL_ARRAY_BUFFER);
-	values->set(20000, 100);
-	main_x_axis = x_axis(
-		"x",
-		width,
-		0,
-		value_count,
-		(value_count / (width / 50)) / 5 * 5);
-	main_x_axis.set_origin(origin);
-	main_y_axis = y_axis(
-		"y",
-		height,
-		0,
-		max_y);
-	main_y_axis.set_origin(origin);
 
 	float inverse_x_scale = value_count * 1.0 / width;
 	float y_scale =  height / max_y;
@@ -44,7 +31,8 @@ line_graph::line_graph(
 		max_y,
 		origin,
 		inverse_x_scale,
-		y_scale](std::shared_ptr<program>){
+		y_scale,
+		color](std::shared_ptr<program>){
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glUniform1f(u_width, singleton<window_info>::value.w);
 			glUniform1f(u_inverse_x_scale, inverse_x_scale);
@@ -52,7 +40,7 @@ line_graph::line_graph(
 			glUniform1f(u_y_scale, y_scale);
 			glUniform1f(u_y_max, max_y);
 			glUniform2f(u_origin, origin.x, origin.y);
-			glUniform4f(u_color, 1, 0.125, 0.125, 0);
+			glUniform4f(u_color, color.r / 255, color.g / 255, color.b / 255, color.a / 255);
 		};
 
 	std::vector<GLuint> indices(0);
@@ -83,7 +71,5 @@ void line_graph::init(){
 }
 
 void line_graph::draw(){
-	main_x_axis.draw();
-	main_y_axis.draw();
 	lines.draw();
 }

@@ -1,6 +1,7 @@
 #include "gl_buffer.h"
 
 #include <iostream>
+#include <cassert>
 
 gl_buffer::gl_buffer(
 	size_t size,
@@ -36,6 +37,7 @@ void gl_buffer::ctx_begin() {
 				<< ":"
 				<< __LINE__ - 2
 				<< std::endl;
+			assert(0);
 	}
 	glGetIntegerv(query, &previous_buffer);
 	glBindBuffer(bind_target, gl_id);

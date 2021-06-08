@@ -1,6 +1,8 @@
 #ifndef _AXIS_H_
 #define _AXIS_H_
 #include <memory>
+#include <sstream>
+#include <iomanip>
 
 #include <GL/glew.h>
 
@@ -26,6 +28,7 @@ class axis{
 		uint16_t neg_length;
 		uint16_t pos_length;
 		glm::vec2 origin;
+		std::function<std::string(float)> label_func;
 
 		static inline std::shared_ptr<program> prog{};
 		char direction;
@@ -42,7 +45,8 @@ class axis{
 			float max,
 			float seg_width,
 			uint8_t nr_subdiv,
-			char direction);
+			char direction,
+			std::function<std::string(float)> label_func);
 
 		void set_segment_width(float width, uint8_t nr_subdivisions = 5);
 		void set_min(float min_val);
@@ -50,6 +54,12 @@ class axis{
 		virtual void set_origin(glm::vec2 origin_val);
 
 		static void init();
+		static const inline std::function<std::string(float)> std_label_func =
+			[](float val){
+				std::stringstream stream;
+				stream << std::fixed << std::setprecision(1) << val;
+				return stream.str();
+			};
 
 		void draw();
 };
@@ -64,7 +74,8 @@ class x_axis: public axis{
 			float min,
 			float max,
 			float seg_width = 10,
-			uint8_t nr_subdiv = 5);
+			uint8_t nr_subdiv = 5,
+			std::function<std::string(float)> label_func = std_label_func);
 };
 
 class y_axis: public axis{
@@ -77,7 +88,8 @@ class y_axis: public axis{
 			float min,
 			float max,
 			float seg_width = 10,
-			uint8_t nr_subdiv = 5);
+			uint8_t nr_subdiv = 5,
+			std::function<std::string(float)> label_func = std_label_func);
 };
 
 #endif

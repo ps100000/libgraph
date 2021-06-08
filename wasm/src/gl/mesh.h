@@ -53,6 +53,7 @@ class mesh: public context{
 				(std::function<void(std::shared_ptr<program>)>)[](std::shared_ptr<program>){});
 
 		void draw();
+		void draw(size_t offset, size_t count);
 };
 
 #endif

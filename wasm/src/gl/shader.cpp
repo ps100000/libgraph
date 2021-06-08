@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <cassert>
 
 #include "common/util.h"
 #include "gl/gl_util.h"
@@ -15,6 +16,7 @@ shader::shader(const std::string filename, GLenum type){
     if(!source){
         std::cerr << "Error opening " << filename << ": " << strerror(errno) << std::endl;
         gl_id = 0;
+        assert(0);
     }
     GLuint res = glCreateShader(type);
     const GLchar* sources[] = {
@@ -50,6 +52,7 @@ shader::shader(const std::string filename, GLenum type){
         print_log(res);
         glDeleteShader(res);
         gl_id = 0;
+        assert(0);
     }
 
     gl_id = res;

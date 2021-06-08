@@ -3,6 +3,7 @@
 #include <iostream>
 #include <optional>
 #include <cstring>
+#include <cassert>
 
 #include "gl_util.h"
 #include "shader.h"
@@ -39,6 +40,7 @@ program::program(std::string vertexfile, std::string fragmentfile){
                 print_log(program);
                 glDeleteProgram(program);
                 gl_id = 0;
+                assert(0);
         }
 
         gl_id = program;
@@ -61,6 +63,7 @@ GLint program::get_attrib(std::string name){
         GLint attribute = glGetAttribLocation(gl_id, name.c_str());
         if(attribute == -1){
             std::cerr << "Could not bind attribute " << name << std::endl;
+            assert(0);
         }
         return attribute;
 }
@@ -69,6 +72,7 @@ GLint program::get_uniform(std::string name){
         GLint uniform = glGetUniformLocation(gl_id, name.c_str());
         if(uniform == -1){
             std::cerr << "Could not bind uniform " << name << std::endl;
+            assert(0);
         }
         return uniform;
 }
